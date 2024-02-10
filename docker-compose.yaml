@@ -1,5 +1,13 @@
 version: "3.7"
 services:
+  queue:
+    image: rabbitmq:3.11-alpine
+    container_name: payment_service_queue
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - queue-data:/var/lib/rabbitmq
   database:
     image: mysql:8.3
     container_name: payment_service_db
@@ -13,3 +21,4 @@ services:
 
 volumes:
   database-data:
+  queue-data:
