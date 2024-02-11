@@ -7,27 +7,40 @@ pub struct Migration;
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         // Replace the sample below with your own migration scripts
-        todo!();
-        /*
         manager
             .create_table(
                 Table::create()
-                    .table(Post::Table)
+                    .table(Ledger::Table)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(Post::Id)
-                            .integer()
+                        ColumnDef::new(Ledger::PaymentId)
+                            .string()
                             .not_null()
-                            .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Post::Title).string().not_null())
-                    .col(ColumnDef::new(Post::Text).string().not_null())
+                    .col(
+                        ColumnDef::new(Ledger::AccountType)
+                            .comment("Account Type of the Ledger Entry. Can be either 'Seller' or 'Buyer'")
+                            .string()
+                            .not_null()
+                            .primary_key(),
+                    )
+                    .col(
+                        ColumnDef::new(Ledger::DebitAmount)
+                            .decimal()
+                            .not_null()
+                            .default(0.0),
+                    )
+                    .col(
+                        ColumnDef::new(Ledger::CreditAmount)
+                            .decimal()
+                            .not_null()
+                            .default(0.0),
+                    )
                     .to_owned(),
             )
             .await
 
-         */
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
@@ -44,7 +57,8 @@ impl MigrationTrait for Migration {
 #[derive(DeriveIden)]
 enum Ledger {
     Table,
-    Id,
-    Title,
-    Text,
+    PaymentId,
+    AccountType,
+    DebitAmount,
+    CreditAmount,
 }
