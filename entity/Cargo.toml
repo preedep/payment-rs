@@ -10,4 +10,5 @@ path = "src/lib.rs"
 
 
 [dependencies]
-sea-orm = { version = "0.12" }
+sea-orm = { version = "0.12" ,  features = ["runtime-tokio-rustls","sqlx-mysql","macros"] }
+serde = { version = "1", features = ["derive"] }
