@@ -1,4 +1,4 @@
-workspace = { members = ["ledger","payment-executor"] }
+workspace = { members = [".","ledger","payment-executor"] }
 
 [package]
 name = "payment-rs"
