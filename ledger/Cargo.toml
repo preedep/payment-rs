@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-sea-orm = {version = "0.12" , features = ["sqlx-mysql"] }
+sea-orm = {version = "0.12" , features = ["runtime-tokio-rustls","sqlx-mysql"] }
 tonic = "0.11"
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "full"] }
 serde = { version = "1", features = ["derive"] }
