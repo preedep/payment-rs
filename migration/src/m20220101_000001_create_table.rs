@@ -1,4 +1,5 @@
 use sea_orm_migration::prelude::*;
+use crate::ColumnSpec::PrimaryKey;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -7,7 +8,7 @@ pub struct Migration;
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         // Replace the sample below with your own migration scripts
-        manager
+       manager
             .create_table(
                 Table::create()
                     .table(Ledger::Table)
@@ -16,14 +17,12 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(Ledger::PaymentId)
                             .string()
                             .not_null()
-                            .primary_key(),
                     )
-                    .col(
+                   .col(
                         ColumnDef::new(Ledger::AccountType)
                             .comment("Account Type of the Ledger Entry. Can be either 'Seller' or 'Buyer'")
                             .string()
                             .not_null()
-                            .primary_key(),
                     )
                     .col(
                         ColumnDef::new(Ledger::DebitAmount)
@@ -37,10 +36,16 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default(0.0),
                     )
+                    .primary_key(
+                        &mut Index::create()
+                            .name("ledger_pk")
+                            .col(Ledger::PaymentId)
+                            .col(Ledger::AccountType)
+                            .to_owned()
+                    )
                     .to_owned(),
             )
             .await
-
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
