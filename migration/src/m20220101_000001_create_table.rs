@@ -1,5 +1,4 @@
 use sea_orm_migration::prelude::*;
-use crate::ColumnSpec::PrimaryKey;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -8,7 +7,23 @@ pub struct Migration;
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         // Replace the sample below with your own migration scripts
-       manager
+        Self::create_table_ledger(manager).await
+    }
+
+    async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        // Replace the sample below with your own migration scripts
+
+        manager
+            .drop_table(Table::drop().table(Ledger::Table).to_owned())
+            .await
+
+
+    }
+}
+
+impl Migration {
+    async fn create_table_ledger(manager: &SchemaManager<'_>) -> Result<(), DbErr> {
+        manager
             .create_table(
                 Table::create()
                     .table(Ledger::Table)
@@ -18,7 +33,7 @@ impl MigrationTrait for Migration {
                             .string()
                             .not_null()
                     )
-                   .col(
+                    .col(
                         ColumnDef::new(Ledger::AccountType)
                             .comment("Account Type of the Ledger Entry. Can be either 'Seller' or 'Buyer'")
                             .string()
@@ -36,6 +51,12 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default(0.0),
                     )
+                    .col(
+                        ColumnDef::new(Ledger::CreatedDateTime)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .primary_key(
                         &mut Index::create()
                             .name("ledger_pk")
@@ -47,16 +68,6 @@ impl MigrationTrait for Migration {
             )
             .await
     }
-
-    async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        // Replace the sample below with your own migration scripts
-
-        manager
-            .drop_table(Table::drop().table(Ledger::Table).to_owned())
-            .await
-
-
-    }
 }
 
 #[derive(DeriveIden)]
@@ -66,4 +77,6 @@ enum Ledger {
     AccountType,
     DebitAmount,
     CreditAmount,
+    #[sea_orm(iden = "created_dt")]
+    CreatedDateTime
 }
